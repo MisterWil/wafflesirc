@@ -1,38 +1,65 @@
 var Util = require("util");
 var Bot = require("./lib/irc");
 
-var YourBot = function(profile) {
+var Shared = require("./shared");
+
+var WaffleBot = function(profile) {
 	Bot.call(this, profile);
 	this.set_log_level(this.LOG_ALL);
 	this.set_trigger("!"); // Exclamation
 };
 
-Util.inherits(YourBot, Bot);
+Util.inherits(WaffleBot, Bot);
 
-YourBot.prototype.init = function() {
+WaffleBot.prototype.init = function() {
 	Bot.prototype.init.call(this);
 
+	this.register_command("btc", Shared.convert_btc,  {
+		help: "Convert btc to another currency. To get available currencies, use !cur. Usage: !btc 10 usd"
+	});
+	
+	this.register_command("cur", Shared.get_currencies, {
+		help: "Returns a list of available currencies for use with !btc."
+	});
+	
+	this.register_command("g", Shared.google, {
+		help: "Run this command with a search query to return the first Google result. Usage: !g kitten images"
+	});
+	
+	this.register_command("google", this.google, {
+		help: "Returns a link to a Google search page of the search term. Usage: !google opencourseware computational complexity"
+	});
+	
 	this.register_command("ping", this.ping);
+	
 	this.on('command_not_found', this.unrecognized);
 };
 
+WaffleBot.prototype.google = function(context, text) {
+	if (!text) {
+		context.channel.send_reply (context.sender, this.get_command_help("google"));
+		return;
+	}
 
-YourBot.prototype.ping = function(cx, text) {
+	context.channel.send_reply (context.intent, "Google search: \""+text+"\" <http://www.google.com/search?q="+encodeURIComponent(text)+">");
+};
+
+WaffleBot.prototype.ping = function(cx, text) {
 	cx.channel.send_reply (cx.sender, "Pong!");
 };
 
-YourBot.prototype.unrecognized = function(cx, text) {
-	cx.channel.send_reply(cx.sender, "There is no command: "+text);
+WaffleBot.prototype.unrecognized = function(cx, text) {
+	cx.channel.send_reply(cx.sender, "There is no command '" + text + "'. Try !help.");
 };
 
 var profile = [{
-	host: "irc.freenode.net",
+	host: "orwell.freenode.net",
 	port: 6667,
-	nick: "wafflesbro",
+	nick: "Wafflebot",
 	password: "",
 	user: "username",
 	real: "Real Name",
 	channels: ["#wafflestest"]
 }];
 
-(new YourBot(profile)).init();
+(new WaffleBot(profile)).init();
