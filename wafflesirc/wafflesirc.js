@@ -9,11 +9,16 @@ var options = {
 	    autoRejoin: true,
 	    autoConnect: true,
 	    channels: ['#wafflestest'],
+	    secure: false,
+	    selfSigned: false,
+	    certExpired: true,
 	    floodProtection: true,
 	    floodProtectionDelay: 1000,
-	};
+	}
 
-var client = new irc.Client('chat.freenode.net', 'wafflesbrobot', options);
+var client = new irc.Client('chat.freenode.net', 'wafflesbrobot', {
+    channels: ['#wafflestest'],
+});
 
 client.addListener('message', function (from, to, message) {
     console.log(from + ' => ' + to + ': ' + message);
