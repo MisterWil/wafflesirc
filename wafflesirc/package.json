@@ -1,0 +1,12 @@
+{
+  "name": "wafflesirc",
+  "version": "0.1.0",
+  "description": "wafflesirc",
+  "main": "wafflesirc.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified! Configure in package.json\" && exit 1"
+  },
+  "dependencies": {
+    "irc": "*"
+  }
+}
