@@ -1,80 +1,38 @@
-var irc = require("irc-js");
+var Util = require("util");
+var Bot = require("./lib/irc");
 
-var config = {
-	// Should the bot crash and burn on errors?
-	"die" : false,
-
-	// Prevent sending lots of messages in rapid succession
-	"flood-protection" : false,
-
-	// Logging level, any combination of: debug, info, warn, error (or: all, none)
-	"log" : "all",
-
-	"nick" : "wafflesbro",
-
-	// Server settings
-	"server" : {
-		// IRC server address
-		"address" : "chat.freenode.net",
-
-		// IRC server port
-		"port" : 6667
-	},
-
-	// The bot's user details
-	"user" : {
-		"hostname" : "internet",
-		"mode" : "+iw",
-		"password" : null,
-		"realname" : "Botty McIRC",
-		"username" : "irc-js"
-	}
+var YourBot = function(profile) {
+	Bot.call(this, profile);
+	this.set_log_level(this.LOG_ALL);
+	this.set_trigger("!"); // Exclamation
 };
 
-irc.connect(config, function(bot) {
-	/*
-	 * This optional callback means the client has connected. It receives
-	 * one argument: the Client instance. Use the `join()` method to join a
-	 * channel:
-	 */
-	bot.join("#wafflestest", function(err, chan) {
-		/* You get this callback when the client has joined the channel.
-		 * The argument here is any eventual Error, and the Channel joined.
-		 */
-		if (err) {
-			console.log("Could not join channel :(", err);
-			return;
-		}
-		/*
-		 * Channels also have some handy methods:
-		 */
-		chan.say("Hello!");
-	});
+Util.inherits(YourBot, Bot);
 
-	/* You can also access channels like this:
-	 * `bot.channels.get("#irc-js").say("Hello!");`
-	 */
+YourBot.prototype.init = function() {
+	Bot.prototype.init.call(this);
 
-	/* Often you want your bot to do something when it receives a specific type
-	 * of message, or when a message contains something of interest.
-	 * The `match()` method lets you do both.
-	 * Look for INVITE messages and join channels:
-	 */
-	bot.match("MOO", function(msg) {
-		/* Here the argument is a Message instance.
-		 * You can look at the `from` property to see who sent it.
-		 * The `reply()` method sends a message to the appropriate channel or person:
-		 */
-		msg.reply("MOOOOOO");
-	});
+	this.register_command("ping", this.ping);
+	this.on('command_not_found', this.unrecognized);
+};
 
-	/* You can look for messages matching a regular expression.
-	 * Each match group is passed as an argument to the callback function.
-	 */
-	bot.match(/\bsomecommand\s+([a-z]+)\s+([0-9]+)/, function(msg, letters,
-			digits) {
-		/* Here, the `letters` argument contains the text matched by the first group.
-		 * And `digits` is the second match. More match groups means more arguments.
-		 */
-	});
-});
+
+YourBot.prototype.ping = function(cx, text) {
+	cx.channel.send_reply (cx.sender, "Pong!");
+};
+
+YourBot.prototype.unrecognized = function(cx, text) {
+	cx.channel.send_reply(cx.sender, "There is no command: "+text);
+};
+
+var profile = [{
+	host: "irc.freenode.net",
+	port: 6667,
+	nick: "wafflesbro",
+	password: "",
+	user: "username",
+	real: "Real Name",
+	channels: ["#wafflestest"]
+}];
+
+(new YourBot(profile)).init();
