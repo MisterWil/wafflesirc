@@ -16,9 +16,7 @@ var options = {
 	    floodProtectionDelay: 1000,
 	}
 
-var client = new irc.Client('chat.freenode.net', 'wafflesbrobot', {
-    channels: ['#wafflestest'],
-});
+var client = new irc.Client('chat.freenode.net', 'wafflesbrobot', options);
 
 client.addListener('message', function (from, to, message) {
     console.log(from + ' => ' + to + ': ' + message);
