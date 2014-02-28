@@ -7,6 +7,6 @@
     "test": "echo \"Error: no test specified! Configure in package.json\" && exit 1"
   },
   "dependencies": {
-    "irc": "*"
+    "irc-js": "2"
   }
 }
