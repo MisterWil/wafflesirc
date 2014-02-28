@@ -1,6 +1,6 @@
 var irc = require('irc');
 
-var client = new irc.Client('irc.freenode.net', 'waffles', {
+var client = new irc.Client('irc.freenode.net', 'wafflesbrobot', {
     channels: ['#wafflestest'],
 });
 
