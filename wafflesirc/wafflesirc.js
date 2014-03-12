@@ -18,7 +18,7 @@ WaffleBot.prototype.init = function() {
 		help: "Convert btc to another currency. To get available currencies, use !cur. Usage: !btc 10 usd"
 	});
 	
-	this.register_command("cur", Shared.get_currencies, {
+	this.register_command("currencies", Shared.get_currencies, {
 		help: "Returns a list of available currencies for use with !btc."
 	});
 	
@@ -29,6 +29,8 @@ WaffleBot.prototype.init = function() {
 	this.register_command("google", this.google, {
 		help: "Returns a link to a Google search page of the search term. Usage: !google opencourseware computational complexity"
 	});
+	
+	this.register_command("help", this.help);
 	
 	this.register_command("ping", this.ping);
 	
@@ -48,6 +50,18 @@ WaffleBot.prototype.ping = function(cx, text) {
 	cx.channel.send_reply (cx.sender, "Pong!");
 };
 
+WaffleBot.prototype.help = function(context, text) {
+    try {
+        if (!text) {
+            return context.channel.send_reply(context.intent, "Available commands: " + this.get_commands());
+        }
+
+        context.channel.send_reply(context.intent, this.get_command_help(text));
+    } catch(e) {
+        context.channel.send_reply(context.sender, e);
+    }
+};
+
 WaffleBot.prototype.unrecognized = function(cx, text) {
 	cx.channel.send_reply(cx.sender, "There is no command '" + text + "'. Try !help.");
 };
@@ -55,11 +69,11 @@ WaffleBot.prototype.unrecognized = function(cx, text) {
 var profile = [{
 	host: "orwell.freenode.net",
 	port: 6667,
-	nick: "Wafflebot",
+	nick: "Pancakes",
 	password: "",
 	user: "username",
 	real: "Real Name",
-	channels: ["#wafflestest"]
+	channels: ["##wafflepool"]
 }];
 
 (new WaffleBot(profile)).init();
